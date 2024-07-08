@@ -1,11 +1,13 @@
 from .exceptions import RedisException, KeyNotFoundException, InvalidKeyException
-from typing import Optional, Any, Dict
-
 from .settings import *
+
+from typing import Optional, Any, Dict
+from cryptography.fernet import Fernet
 
 import redis
 import json
-from cryptography.fernet import Fernet
+import logging
+import binascii
 
 
 class RedisManager:
@@ -151,9 +153,13 @@ class RedisManager:
         :return: True if the user value matches the stored value, False otherwise.
         """
         if self.cache.exists(self.key):
-            encrypted_otp = self.cache.get(self.key)
-            decrypted_otp = self.decrypt_value(encrypted_otp)
-            return decrypted_otp == user_value
+            redis_value = self.cache.get(self.key)
+            try:
+                decrypted_redis_value = self.decrypt_value(redis_value)
+                return decrypted_redis_value == user_value
+            except Exception as e:
+                logging.error(f"Error during validation: {e}")
+                return False
         return False
 
     def exists(self) -> bool:
@@ -198,9 +204,12 @@ class RedisManager:
 
     def decrypt_value(self, encrypted_value: str) -> str:
         """
-        Decrypt a value using Fernet symmetric encryption.
+        Decrypt the encrypted value using Fernet.
 
         :param encrypted_value: The encrypted value to decrypt.
-        :return: The decrypted value as a string.
+        :return: The decrypted value.
         """
-        return self.cipher_suite.decrypt(encrypted_value.encode()).decode()
+        try:
+            return self.cipher_suite.decrypt(encrypted_value.encode()).decode()
+        except (TypeError, binascii.Error, ValueError) as e:
+            raise ValueError("Failed to decrypt value") from e

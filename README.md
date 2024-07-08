@@ -1,6 +1,7 @@
 # Redis Management
 
-A utility package for managing Redis keys in Python. This package provides an easy-to-use interface for interacting with Redis, including setting, getting, and managing expiration of keys.
+A utility package for managing Redis keys in Python. This package provides an easy-to-use interface for interacting with
+Redis, including setting, getting, and managing expiration of keys.
 
 ## Features
 
@@ -21,84 +22,116 @@ A utility package for managing Redis keys in Python. This package provides an ea
 
 You can install this package directly from GitHub:
 
-\```bash
-pip install git+https://github.com/your-username/my_redis_utils.git
-\```
+```bash
+pip install git+https://github.com/AAbbasRR/redis-manager.git
+```
 
 Alternatively, clone the repository and install manually:
 
-\```bash
-git clone https://github.com/your-username/my_redis_utils.git
+```bash
+git clone https://github.com/AAbbasRR/redis-manager.git
 cd my_redis_utils
 pip install .
-\```
+```
 
 ## Configuration
 
-By default, the package uses `localhost` and the default Redis port (6379). You can configure the Redis connection using `python-decouple` or by providing the parameters directly.
+By default, the package uses `localhost` and the default Redis port (6379). You can configure the Redis connection
+using `python-decouple` or by providing the parameters directly.
 
 ### Configuration Keys
 
 - `REDIS_HOST`: The hostname or IP address of the Redis server. Default is `localhost`.
 - `REDIS_PORT`: The port number on which the Redis server is listening. Default is `6379`.
 - `REDIS_DB`: The Redis database number to use. Default is `0`.
+- `FERNET_KEY`: Before using the application, it's essential to set up the `FERNET_KEY`. This key is used for encrypting
+  and decrypting sensitive data.
 
 ### Example Configuration using `python-decouple`
 
 1. Install `python-decouple`:
-    \```bash
-    pip install python-decouple
-    \```
+   ```bash
+   pip install python-decouple
+   ```
 
 2. Create a `.env` file in your project root and add your Redis configuration:
-    \```env
-    REDIS_HOST=localhost
-    REDIS_PORT=6379
-    REDIS_DB=0
-    \```
+   ```env
+   REDIS_HOST=localhost
+   REDIS_PORT=6379
+   REDIS_DB=0
+   FERNET_KEY=YourGeneratedKeyHere
+   ```
 
 3. Use the configuration in your code:
-    \```python from my_redis_utils.redis_manager import RedisManager
+   ```python 
+   from my_redis_utils.redis_manager import RedisManager
+   redis_manager = RedisManager(identifier="user123", key="session_token")
+   ```
 
-    redis_manager = RedisManager(identifier="user123", key="session_token")
-    \```
+### Generating the FERNET_KEY
+
+To generate a `FERNET_KEY`, you can use the following command in your terminal:
+
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
 
 ## Usage
 
 ### Example Code
-    python from my_redis_utils.redis_manager import RedisManager
+```python
+python from my_redis_utils.redis_manager import RedisManager
+```
 
 # Initialize RedisManager with identifier and key
-    redis_manager = RedisManager(identifier="user123", key="session_token")
+```python
+redis_manager = RedisManager(identifier="user123", key="session_token")
+```
 
 # Set a value
-    redis_manager.set_value("some_value")
+```python
+redis_manager.set_value("some_value")
+```
 
 # Get a value
-    value = redis_manager.get_value()
-    print(value)
+```python
+value = redis_manager.get_value()
+print(value)
+```
 
 # Set a JSON value
+```python
 redis_manager.set_json_value({"key": "value"})
+```
 
 # Get a JSON value
-    json_value = redis_manager.get_json_value()
-    print(json_value)
+```python
+json_value = redis_manager.get_json_value()
+print(json_value)
+```
 
 # Create and set OTP key
-    otp_code = redis_manager.create_and_set_otp_key()
-    print(otp_code)
+```python
+otp_code = redis_manager.create_and_set_otp_key()
+print(otp_code)
+```
 
 # Validate OTP code
-    is_valid = redis_manager.validate(otp_code)
-    print(is_valid)
+```python
+is_valid = redis_manager.validate(otp_code)
+print(is_valid)
+```
 
 # Check if key exists
-    exists = redis_manager.exists()
-    print(exists)
+```python
+exists = redis_manager.exists()
+print(exists)
+```
 
 # Delete the key
-    redis_manager.delete()
+```python
+redis_manager.delete()
+```
 
 
 ## Exception Handling
@@ -111,7 +144,7 @@ The package provides custom exceptions for better error handling:
 
 Example:
 
-\```python
+```python
 from my_redis_utils.redis_manager import RedisManager
 from my_redis_utils.exceptions import KeyNotFoundException
 
@@ -120,7 +153,7 @@ try:
     value = redis_manager.get_value()
 except KeyNotFoundException:
     print("Key not found in Redis.")
-\```
+```
 
 ## License
 
