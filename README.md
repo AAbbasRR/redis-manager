@@ -58,8 +58,7 @@ By default, the package uses `localhost` and the default Redis port (6379). You 
     \```
 
 3. Use the configuration in your code:
-    \```python
-    from my_redis_utils.redis_manager import RedisManager
+    \```python from my_redis_utils.redis_manager import RedisManager
 
     redis_manager = RedisManager(identifier="user123", key="session_token")
     \```
@@ -67,42 +66,40 @@ By default, the package uses `localhost` and the default Redis port (6379). You 
 ## Usage
 
 ### Example Code
-
-\```python
-from my_redis_utils.redis_manager import RedisManager
+    python from my_redis_utils.redis_manager import RedisManager
 
 # Initialize RedisManager with identifier and key
-redis_manager = RedisManager(identifier="user123", key="session_token")
+    redis_manager = RedisManager(identifier="user123", key="session_token")
 
 # Set a value
-redis_manager.set_value("some_value")
+    redis_manager.set_value("some_value")
 
 # Get a value
-value = redis_manager.get_value()
-print(value)
+    value = redis_manager.get_value()
+    print(value)
 
 # Set a JSON value
 redis_manager.set_json_value({"key": "value"})
 
 # Get a JSON value
-json_value = redis_manager.get_json_value()
-print(json_value)
+    json_value = redis_manager.get_json_value()
+    print(json_value)
 
 # Create and set OTP key
-otp_code = redis_manager.create_and_set_otp_key()
-print(otp_code)
+    otp_code = redis_manager.create_and_set_otp_key()
+    print(otp_code)
 
 # Validate OTP code
-is_valid = redis_manager.validate(otp_code)
-print(is_valid)
+    is_valid = redis_manager.validate(otp_code)
+    print(is_valid)
 
 # Check if key exists
-exists = redis_manager.exists()
-print(exists)
+    exists = redis_manager.exists()
+    print(exists)
 
 # Delete the key
-redis_manager.delete()
-\```
+    redis_manager.delete()
+
 
 ## Exception Handling
 
