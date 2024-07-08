@@ -7,6 +7,7 @@ setup(
     install_requires=[
         "redis",  # Specify the Minimum Version if Necessary
         "python-decouple",
+        "cryptography==42.0.8"
     ],
     include_package_data=True,
     description="A utility package for managing Redis keys.",

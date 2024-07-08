@@ -1,2 +1,6 @@
+async-timeout==4.0.3
+cffi==1.16.0
+cryptography==42.0.8
+pycparser==2.22
 python-decouple==3.8
 redis==5.0.7

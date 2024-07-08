@@ -5,6 +5,7 @@ from .settings import *
 
 import redis
 import json
+from cryptography.fernet import Fernet
 
 
 class RedisManager:
@@ -32,6 +33,7 @@ class RedisManager:
             "forget_password": 900,  # 15Min
             "change_password": 900,  # 15Min
         }
+        self.cipher_suite = Fernet(FERNET_KEY)
 
     def set_value(self, value: str) -> bool:
         """
@@ -77,7 +79,8 @@ class RedisManager:
         """
         if otp_code is None:
             otp_code = self.create_otp_code(length)
-        self.set_value(otp_code)
+        encrypted_otp = self.encrypt_value(otp_code)
+        self.set_value(encrypted_otp)
         self.set_expire(self.expire_times["otp_code"])
         return otp_code
 
@@ -148,8 +151,9 @@ class RedisManager:
         :return: True if the user value matches the stored value, False otherwise.
         """
         if self.cache.exists(self.key):
-            redis_value = self.cache.get(self.key)
-            return redis_value == user_value
+            encrypted_otp = self.cache.get(self.key)
+            decrypted_otp = self.decrypt_value(encrypted_otp)
+            return decrypted_otp == user_value
         return False
 
     def exists(self) -> bool:
@@ -182,3 +186,21 @@ class RedisManager:
         import random
         import string
         return ''.join(random.choices(string.digits, k=length))
+
+    def encrypt_value(self, value: str) -> str:
+        """
+        Encrypt a value using Fernet symmetric encryption.
+
+        :param value: The value to encrypt.
+        :return: The encrypted value as a string.
+        """
+        return self.cipher_suite.encrypt(value.encode()).decode()
+
+    def decrypt_value(self, encrypted_value: str) -> str:
+        """
+        Decrypt a value using Fernet symmetric encryption.
+
+        :param encrypted_value: The encrypted value to decrypt.
+        :return: The decrypted value as a string.
+        """
+        return self.cipher_suite.decrypt(encrypted_value.encode()).decode()
