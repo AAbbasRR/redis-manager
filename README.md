@@ -64,7 +64,7 @@ using `python-decouple` or by providing the parameters directly.
 
 3. Use the configuration in your code:
    ```python 
-   from my_redis_utils.redis_manager import RedisManager
+   from redis_management.redis_manager import RedisManager
    redis_manager = RedisManager(identifier="user123", key="session_token")
    ```
 
@@ -80,7 +80,7 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 ### Example Code
 ```python
-python from my_redis_utils.redis_manager import RedisManager
+from redis_management.redis_manager import RedisManager
 ```
 
 # Initialize RedisManager with identifier and key
@@ -145,8 +145,8 @@ The package provides custom exceptions for better error handling:
 Example:
 
 ```python
-from my_redis_utils.redis_manager import RedisManager
-from my_redis_utils.exceptions import KeyNotFoundException
+from redis_management.redis_manager import RedisManager
+from redis_management.exceptions import KeyNotFoundException
 
 try:
     redis_manager = RedisManager(identifier="user123", key="non_existent_key")
