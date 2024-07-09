@@ -6,7 +6,7 @@ from cryptography.fernet import Fernet
 
 @pytest.fixture
 def mock_redis():
-    with patch('redis_management.redis_manager.redis.StrictRedis') as mock_redis_cls:
+    with patch('redis_management.redis_management.redis_manager.redis.StrictRedis') as mock_redis_cls:
         mock_cache = MagicMock()
         mock_redis_cls.return_value = mock_cache
         yield mock_cache
@@ -81,7 +81,7 @@ def test_delete(redis_manager_instance, mock_redis):
     mock_redis.delete.assert_called_once()
 
 
-@patch('redis_management.redis_manager.RedisManager.decrypt_value')
+@patch('redis_management.redis_management.redis_manager.RedisManager.decrypt_value')
 def test_validate_successful(mock_decrypt_value, redis_manager_instance, mock_redis):
     mock_redis.get.return_value = "encrypted_value"
     mock_decrypt_value.return_value = "test_value"
@@ -90,7 +90,7 @@ def test_validate_successful(mock_decrypt_value, redis_manager_instance, mock_re
     mock_decrypt_value.assert_called_once_with("encrypted_value")
 
 
-@patch('redis_management.redis_manager.RedisManager.decrypt_value')
+@patch('redis_management.redis_management.redis_manager.RedisManager.decrypt_value')
 def test_validate_decryption_failure(mock_decrypt_value, redis_manager_instance, mock_redis):
     mock_redis.get.return_value = "encrypted_value"
     mock_decrypt_value.side_effect = ValueError("Failed to decrypt value")
