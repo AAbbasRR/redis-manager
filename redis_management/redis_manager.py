@@ -6,7 +6,6 @@ from cryptography.fernet import Fernet
 
 import redis
 import json
-import logging
 import binascii
 
 
@@ -30,11 +29,6 @@ class RedisManager:
             db=REDIS_DB,
         )
         self.key = f"{identifier}:{key}"
-        self.expire_times = {
-            "otp_code": 300,  # 5Min
-            "forget_password": 900,  # 15Min
-            "change_password": 900,  # 15Min
-        }
         self.cipher_suite = Fernet(FERNET_KEY)
 
     def set_value(self, value: str) -> bool:
@@ -71,19 +65,20 @@ class RedisManager:
         """
         return self.set_value(str(value).upper())
 
-    def create_and_set_otp_key(self, length: int = 5, otp_code: Optional[str] = None) -> str:
+    def create_and_set_otp_key(self, length: int = 5, otp_code: Optional[str] = None, expire_time: int = 300) -> str:
         """
         Create and set a one-time password (OTP) key.
 
         :param length: The length of the OTP code (default is 5).
         :param otp_code: The OTP code to set (optional).
+        :param expire_time: The time for expire key (default is 300 = 5min).
         :return: The OTP code that was set.
         """
         if otp_code is None:
             otp_code = self.create_otp_code(length)
         encrypted_otp = self.encrypt_value(otp_code)
         self.set_value(encrypted_otp)
-        self.set_expire(self.expire_times["otp_code"])
+        self.set_expire(expire_time)
         return otp_code
 
     def get_value(self) -> Optional[str]:
@@ -156,9 +151,8 @@ class RedisManager:
             redis_value = self.cache.get(self.key)
             try:
                 decrypted_redis_value = self.decrypt_value(redis_value)
-                return decrypted_redis_value == user_value
+                return str(decrypted_redis_value) == str(user_value)
             except Exception as e:
-                logging.error(f"Error during validation: {e}")
                 return False
         return False
 
@@ -213,3 +207,4 @@ class RedisManager:
             return self.cipher_suite.decrypt(encrypted_value.encode()).decode()
         except (TypeError, binascii.Error, ValueError) as e:
             raise ValueError("Failed to decrypt value") from e
+
